@@ -1,11 +1,10 @@
 #!/bin/bash
 
-# This is an example only, and should be independently tested and verified
+# ⚠️ This is an example only, and should be independently tested and verified
 # before being used in production.
 #
 # From:
 # https://github.com/buildkite/buildkite-plugin-whitelister
-#
 #
 # An example script for checking that all the plugins used in the environment
 # variable $BUILDKITE_PLUGINS are specified in the whitelist. If an unknown
