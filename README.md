@@ -1,5 +1,18 @@
-# Example hook for whitelisting Buildkite Plugins
+# Buildkite Plugin Whitelisting Example
 
-An example [Buildkite Agent](https://buildkite.com/docs/agent/v3) [environment hook](https://buildkite.com/docs/agent/v3/hooks) that performs plugin whitelisting.
+An example script for performing Buildkite Plugin whitelisting using the `BUILDKITE_PLUGINS` JSON environment variable. Requirements:
 
-⚠️ Currently a work-in-progress and not recommended for production use.
+* Bash
+* jq
+
+## Usage
+
+See [check-plugins](check-plugins)
+
+## Developing
+
+Use the following to run the tests:
+
+```bash
+docker-compose run --rm tests
+```

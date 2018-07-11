@@ -1,0 +1,2 @@
+github.com/buildkite-plugins/docker-compose-buildkite-plugin
+github.com/my-org/my-buildkite-plugin

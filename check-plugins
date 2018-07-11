@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# This is an example only, and should be independently tested and verified
+# before being used in production.
+#
+# From:
+# https://github.com/buildkite/buildkite-plugin-whitelister
+#
+#
+# An example script for checking that all the plugins used in the environment
+# variable $BUILDKITE_PLUGINS are specified in the whitelist. If an unknown
+# plugin is found, an error will be printed with an exit status code of 1.
+#
+# To be used in an Buildkite Agent environment hook like so:
+# 
+#   #!/bin/bash
+#   set -euo pipefail
+#   /usr/local/src/buildkite-plugin-whitelister/check-plugins \
+#     /usr/local/var/buildkite-agent/plugin-whitelist.txt
+#
+# The whitelist file must contain a newline-delimited set of plugin URLs, for
+# example:
+#
+#   github.com/buildkite-plugins/docker-compose-buildkite-plugin
+#   github.com/buildkite-plugins/docker-buildkite-plugin
+#   github.com/buildkite-plugins/shellcheck-buildkite-plugin
+
+set -euo pipefail
+
+WHITELIST_FILE_PATH="${1?"Usage: $0 <whitelist-file-path>"}"
+
+if [[ ! -e "$WHITELIST_FILE_PATH" ]]; then
+  echo "$WHITELIST_FILE_PATH does not exist"
+  exit 1
+fi
+
+readarray -t PLUGINS_ALLOWED < "$WHITELIST_FILE_PATH"
+
+# We use base64, so we encode newlines and ensure you can't force a split
+PLUGINS_USED_BASE64=$(echo "${BUILDKITE_PLUGINS}" | jq -r 'map(keys) | flatten | map(capture("(?<name>[^#:]+)")) | map(.name) | .[] | @base64')
+
+for plugin_used_base64 in ${PLUGINS_USED_BASE64}; do
+  plugin_used=$(echo "$plugin_used_base64" | base64 -d)
+
+  is_used_plugin_allowed="false"
+
+  for plugin_allowed in "${PLUGINS_ALLOWED[@]}"; do
+    if [[ "${plugin_used}" == "${plugin_allowed}" ]]; then
+      is_used_plugin_allowed="true"
+    fi
+  done
+
+  if [[ "${is_used_plugin_allowed}" != "true" ]]; then
+    echo "Plugin not allowed: ${plugin_used}"
+    exit 1
+  fi
+done
+
+echo "All plugins are allowed."
