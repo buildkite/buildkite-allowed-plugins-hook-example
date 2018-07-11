@@ -2,6 +2,14 @@
 
 load "$BATS_PATH/load.bash"
 
+@test "Allows missing list of plugins (no plugins)" {
+  run \
+    "$PWD/check-plugins" "$PWD/tests/whitelist.txt"
+
+  assert_output --partial "BUILDKITE_PLUGINS is unset"
+  assert_success
+}
+
 @test "Allows valid plugins (single plugin, no config)" {
   run \
     env BUILDKITE_PLUGINS='[{"github.com/buildkite-plugins/docker-compose-buildkite-plugin#v1.6.0":null}]' \

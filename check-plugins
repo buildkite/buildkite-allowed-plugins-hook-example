@@ -33,6 +33,11 @@ if [[ ! -e "$WHITELIST_FILE_PATH" ]]; then
   exit 1
 fi
 
+if [[ -z "${BUILDKITE_PLUGINS-}" ]]; then
+  echo "No plugins to check against the whitelist (BUILDKITE_PLUGINS is unset)"
+  exit 0
+fi
+
 readarray -t PLUGINS_ALLOWED < "$WHITELIST_FILE_PATH"
 
 # We use base64, so we encode newlines and ensure you can't force a split
