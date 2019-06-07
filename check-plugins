@@ -4,21 +4,21 @@
 # before being used in production.
 #
 # From:
-# https://github.com/buildkite/buildkite-plugin-whitelister
+# https://github.com/buildkite/buildkite-allowed-plugins-hook-example
 #
 # An example script for checking that all the plugins used in the environment
-# variable $BUILDKITE_PLUGINS are specified in the whitelist. If an unknown
+# variable $BUILDKITE_PLUGINS are specified in an allowed list. If an unknown
 # plugin is found, an error will be printed with an exit status code of 1.
 #
 # To be used in an Buildkite Agent environment hook like so:
 # 
 #   #!/bin/bash
 #   set -euo pipefail
-#   /usr/local/src/buildkite-plugin-whitelister/check-plugins \
-#     /usr/local/var/buildkite-agent/plugin-whitelist.txt
+#   /usr/local/src/buildkite-plugin-allowed-pluginser/check-plugins \
+#     /usr/local/var/buildkite-agent/allowed-plugins.txt
 #
-# The whitelist file must contain a newline-delimited set of plugin URLs, for
-# example:
+# The allowed plugins file must contain a newline-delimited set of plugin URLs,
+#  for example:
 #
 #   github.com/buildkite-plugins/docker-compose-buildkite-plugin
 #   github.com/buildkite-plugins/docker-buildkite-plugin
@@ -26,19 +26,19 @@
 
 set -euo pipefail
 
-WHITELIST_FILE_PATH="${1?"Usage: $0 <whitelist-file-path>"}"
+ALLOWED_PLUGINS_FILE_PATH="${1?"Usage: $0 <allowed-plugins-file-path>"}"
 
-if [[ ! -e "$WHITELIST_FILE_PATH" ]]; then
-  echo "$WHITELIST_FILE_PATH does not exist"
+if [[ ! -e "$ALLOWED_PLUGINS_FILE_PATH" ]]; then
+  echo "$ALLOWED_PLUGINS_FILE_PATH does not exist"
   exit 1
 fi
 
 if [[ -z "${BUILDKITE_PLUGINS-}" ]]; then
-  echo "No plugins to check against the whitelist (BUILDKITE_PLUGINS is unset)"
+  echo "No plugins to check against the allowed-plugins (BUILDKITE_PLUGINS is unset)"
   exit 0
 fi
 
-readarray -t PLUGINS_ALLOWED < "$WHITELIST_FILE_PATH"
+readarray -t PLUGINS_ALLOWED < "$ALLOWED_PLUGINS_FILE_PATH"
 
 # We use base64, so we encode newlines and ensure you can't force a split
 PLUGINS_USED_BASE64=$(echo "${BUILDKITE_PLUGINS}" | jq -r 'map(keys) | flatten | map(capture("(?<name>[^#:]+)")) | map(.name) | .[] | @base64')

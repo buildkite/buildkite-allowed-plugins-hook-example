@@ -1,6 +1,6 @@
-# Buildkite Plugin Whitelisting Example
+# Buildkite Allowed Plugins Hooks Example
 
-An example script for performing Buildkite Plugin whitelisting using the `BUILDKITE_PLUGINS` JSON environment variable, and an agent environment hook. ⚠️ This is an example only, and should be independently tested and verified before being used in production.
+An example script for enforcing an allowed list of Buildkite Plugins in a [Buildkite Agent Hook](https://buildkite.com/docs/agent/v3/hooks), by checking the `BUILDKITE_PLUGINS` JSON environment variable. ⚠️ This is an example only, and should be independently tested and verified before being used in production.
 
 Agent machine requirements:
 
