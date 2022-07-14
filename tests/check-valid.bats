@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 
-load "$BATS_PATH/load.bash"
+load '/usr/local/lib/bats/load.bash'
 
 @test "Allows missing list of plugins (no plugins)" {
   run \
